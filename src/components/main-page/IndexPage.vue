@@ -1,26 +1,31 @@
 <script setup lang="ts">
 import UCard from '@/components/ui/card/UCard.vue'
+import { RequestsRepository, type pageInfo } from '@/repository/repository'
+import { onBeforeMount, ref, type Ref } from 'vue'
+import type { ICharacterInfo } from '../ui/card/config'
 
-const info = {
-  id: 16,
-  name: 'Amish Cyborg',
-  status: 'Dead',
-  species: 'Alien',
-  type: 'Parasite',
-  gender: 'Male',
-  origin: { name: 'unknown', url: '' },
-  location: {
-    name: 'Earth (Replacement Dimension)',
-    url: 'https://rickandmortyapi.com/api/location/20'
-  },
-  image: 'https://rickandmortyapi.com/api/character/avatar/16.jpeg',
-  episode: ['https://rickandmortyapi.com/api/episode/15'],
-  url: 'https://rickandmortyapi.com/api/character/16',
-  created: '2017-11-04T21:12:45.235Z'
+const charactersList: Ref<ICharacterInfo[]> = ref([])
+const pagesInfo: Ref<pageInfo> = ref({ count: 0, pages: 0, next: '', prev: '' })
+
+const reqRepo = new RequestsRepository()
+
+onBeforeMount(() => {
+  fetchData()
+  console.log(charactersList.value, pagesInfo.value)
+})
+
+async function fetchData() {
+  await reqRepo.getCharacters().then((resp) => {
+    charactersList.value = [...resp.results]
+    pagesInfo.value = resp.info
+  })
 }
-console.log(info)
 </script>
 <template>
-  <u-card :character-info="info"></u-card>
+  <u-card
+    v-for="character in charactersList"
+    :character-info="character"
+    :key="character.id"
+  ></u-card>
 </template>
 <style lang="sass"></style>
