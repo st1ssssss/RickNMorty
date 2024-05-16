@@ -52,7 +52,7 @@ const statusCharacter = computed(() => {
 </template>
 <style lang="sass">
 .card-item
-  width: 600px
+  width: 550px
   color: white
   height: 220px
   display: flex
